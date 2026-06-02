@@ -135,3 +135,15 @@ def deletar_jogo(id: int):
     Response: 204 No Content (sem corpo de resposta).
     """
     for i, jogo in enumerate(jogos):
+        if jogo["id"] == id:
+            jogos.pop(i)
+            return
+
+    raise HTTPException(status_code=404, detail="Jogo não encontrado.")
+
+
+# ─── Inicialização ───────────────────────────────────────────────────────────
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
