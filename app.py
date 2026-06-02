@@ -1,11 +1,23 @@
 from fastapi import FastAPI, HTTPException, Body
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware  # Importado para resolver o CORS
 import uuid
 
 app = FastAPI(
     title="API Mobile - Biblioteca de Jogos",
     description="API CRUD para gerenciar uma biblioteca pessoal de jogos e suas respectivas avaliações.",
     version="1.0.0"
+)
+
+# ─── Configuração do CORS ───────────────────────────────────────────────────
+
+# Configurado com "*" para que o Expo Snack consiga acessar livremente
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # ─── Dados em memória ────────────────────────────────────────────────────────
@@ -27,8 +39,8 @@ jogos = [
     }
 ]
 
-# Controle de ID auto-incrementável
-proximo_id = 1
+# Ajustado para 3 para evitar duplicação com os IDs 1 e 2 já existentes
+proximo_id = 3
 
 
 # ─── POST /login ─────────────────────────────────────────────────────────────
@@ -123,15 +135,3 @@ def deletar_jogo(id: int):
     Response: 204 No Content (sem corpo de resposta).
     """
     for i, jogo in enumerate(jogos):
-        if jogo["id"] == id:
-            jogos.pop(i)
-            return
-
-    raise HTTPException(status_code=404, detail="Jogo não encontrado.")
-
-
-# ─── Inicialização ───────────────────────────────────────────────────────────
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
